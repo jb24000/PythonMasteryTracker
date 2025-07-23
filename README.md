@@ -39,7 +39,7 @@ Visit the live site:
 
 ## 🖼️ Screenshots
 
-![Python 30-Day Mastery Tracker Screenshot](Screenshot 2025-07-23 005820.png)
+![Python 30-Day Mastery Tracker Screenshot](Screenshot2025-07-23005820.png)
 
 ---
 
