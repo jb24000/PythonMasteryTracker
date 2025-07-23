@@ -39,7 +39,7 @@ Visit the live site:
 
 ## 🖼️ Screenshots
 
-![Python 30-Day Mastery Tracker Screenshot](https://placehold.co/800x400?text=Screenshot+Coming+Soon)
+![Python 30-Day Mastery Tracker Screenshot](Screenshot 2025-07-23 005820.png)
 
 ---
 
