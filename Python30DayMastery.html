@@ -1,0 +1,1264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python 30-Day Mastery Tracker</title>
+    <meta name="theme-color" content="#667eea">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .progress-ring {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 20px;
+            position: relative;
+        }
+
+        .progress-ring svg {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+
+        .progress-ring circle {
+            fill: none;
+            stroke-width: 8;
+        }
+
+        .progress-ring .bg {
+            stroke: rgba(255, 255, 255, 0.2);
+        }
+
+        .progress-ring .progress {
+            stroke: #4ade80;
+            stroke-linecap: round;
+            transition: stroke-dasharray 0.5s ease;
+        }
+
+        .progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 15px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .current-week {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .week-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .task-list {
+            list-style: none;
+        }
+
+        .task-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .task-item:last-child {
+            border-bottom: none;
+        }
+
+        .task-checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            margin-right: 15px;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .task-checkbox.completed {
+            background: #4ade80;
+            border-color: #4ade80;
+        }
+
+        .task-checkbox.completed::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .task-content {
+            flex: 1;
+        }
+
+        .task-text {
+            font-size: 14px;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .task-text.completed {
+            opacity: 0.6;
+            text-decoration: line-through;
+        }
+
+        .task-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 5px;
+        }
+
+        .task-link {
+            background: rgba(74, 222, 128, 0.2);
+            color: #4ade80;
+            padding: 4px 8px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 11px;
+            font-weight: 500;
+            border: 1px solid rgba(74, 222, 128, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .task-link:hover {
+            background: rgba(74, 222, 128, 0.3);
+            transform: translateY(-1px);
+        }
+
+        .task-time {
+            font-size: 12px;
+            opacity: 0.7;
+            font-style: italic;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: #4ade80;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .notification-status {
+            text-align: center;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 12px;
+        }
+
+        .notification-enabled {
+            background: rgba(74, 222, 128, 0.2);
+        }
+
+        .notification-disabled {
+            background: rgba(239, 68, 68, 0.2);
+        }
+
+        .week-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .streak-fire {
+            display: inline-block;
+            margin-left: 5px;
+            animation: flicker 1s infinite alternate;
+        }
+
+        @keyframes flicker {
+            0% { opacity: 1; }
+            100% { opacity: 0.7; }
+        }
+
+        .achievement {
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            color: #1a1a1a;
+            padding: 10px;
+            border-radius: 10px;
+            margin: 10px 0;
+            text-align: center;
+            font-weight: bold;
+            animation: bounce 0.5s ease;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 60%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            80% { transform: translateY(-5px); }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 20px;
+            }
+            
+            .progress-ring {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .progress-text {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🐍 Python 30-Day Mastery</h1>
+            <div class="progress-ring">
+                <svg>
+                    <circle cx="60" cy="60" r="52" class="bg"></circle>
+                    <circle cx="60" cy="60" r="52" class="progress" id="progressCircle"></circle>
+                </svg>
+                <div class="progress-text" id="progressText">0%</div>
+            </div>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number" id="currentStreak">0</div>
+                <div class="stat-label">Day Streak <span class="streak-fire" id="streakFire" style="display:none;">🔥</span></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalDays">0</div>
+                <div class="stat-label">Days Completed</div>
+            </div>
+        </div>
+
+        <div class="notification-status notification-disabled" id="notificationStatus">
+            📱 Enable notifications for daily reminders
+        </div>
+
+        <div class="controls">
+            <button class="btn btn-primary" id="enableNotifications">📱 Enable Alerts</button>
+            <button class="btn btn-secondary" id="resetProgress">🔄 Reset</button>
+        </div>
+
+        <div class="current-week">
+            <div class="week-nav">
+                <button class="nav-btn" id="prevDay">← Prev</button>
+                <div class="week-title" id="dayTitle">Day 1</div>
+                <button class="nav-btn" id="nextDay">Next →</button>
+            </div>
+            
+            <ul class="task-list" id="taskList">
+                <!-- Tasks will be populated by JavaScript -->
+            </ul>
+        </div>
+
+        <div id="achievementContainer"></div>
+    </div>
+
+    <script>
+        class PythonDailyTracker {
+            constructor() {
+                this.currentDay = 0;
+                this.completedTasks = {};
+                this.startDate = null;
+                this.notificationsEnabled = false;
+                this.achievements = [];
+                
+                this.days = [
+                    {
+                        title: "Day 1: Python Setup & Hello World",
+                        tasks: [
+                            {
+                                text: "Install Python & your favorite IDE",
+                                time: "Morning (20min)",
+                                links: [
+                                    { name: "Download Python", url: "https://www.python.org/downloads/" },
+                                    { name: "VSCode Setup", url: "https://code.visualstudio.com/docs/python/python-tutorial" }
+                                ]
+                            },
+                            {
+                                text: "Write your first Python script (Hello World)",
+                                time: "Evening (30min)",
+                                links: [
+                                    { name: "Hello World", url: "https://www.w3schools.com/python/python_getstarted.asp" }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        title: "Day 2: Variables & Data Types",
+                        tasks: [
+                            {
+                                text: "Learn about variables and data types",
+                                time: "Morning (30min)",
+                                links: [
+                                    { name: "Variables", url: "https://www.w3schools.com/python/python_variables.asp" }
+                                ]
+                            },
+                            {
+                                text: "Practice with numbers and strings",
+                                time: "Evening (30min)",
+                                links: [
+                                    { name: "Numbers & Strings", url: "https://www.learnpython.org/en/Variables_and_Types" }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        title: "Day 3: Lists & Tuples",
+                        tasks: [
+                            {
+                                text: "Study lists and basic list operations",
+                                time: "Morning (30min)",
+                                links: [
+                                    { name: "Python Lists", url: "https://www.w3schools.com/python/python_lists.asp" }
+                                ]
+                            },
+                            {
+                                text: "Learn about tuples and their uses",
+                                time: "Evening (30min)",
+                                links: [
+                                    { name: "Python Tuples", url: "https://www.w3schools.com/python/python_tuples.asp" }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        title: "Day 4: Sets & Dictionaries",
+                        tasks: [
+                            {
+                                text: "Explore sets and set operations",
+                                time: "Morning (30min)",
+                                links: [
+                                    { name: "Python Sets", url: "https://www.w3schools.com/python/python_sets.asp" }
+                                ]
+                            },
+                            {
+                                text: "Work with dictionaries (key-value pairs)",
+                                time: "Evening (30min)",
+                                links: [
+                                    { name: "Python Dictionaries", url: "https://www.w3schools.com/python/python_dictionaries.asp" }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        title: "Day 5: Basic Input/Output",
+                        tasks: [
+                            {
+                                text: "Learn input() and print() functions",
+                                time: "Morning (20min)",
+                                links: [
+                                    { name: "User Input", url: "https://www.w3schools.com/python/python_user_input.asp" }
+                                ]
+                            },
+                            {
+                                text: "Mini project: Simple calculator",
+                                time: "Evening (40min)",
+                                links: [
+                                    { name: "Calculator Example", url: "https://www.geeksforgeeks.org/python-program-make-simple-calculator/" }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        title: "Day 6: Control Flow - If/Else",
+                        tasks: [
+                            {
+                                text: "Study if, elif, else statements",
+                                time: "Morning (30min)",
+                                links: [
+                                    { name: "If...Else", url: "https://www.w3schools.com/python/python_conditions.asp" }
+                                ]
+                            },
+                            {
+                                text: "Practice: Write a grade checker",
+                                time: "Evening (30min)",
+                                links: [
+                                    { name: "Grade Checker Example", url: "https://www.programiz.com/python-programming/examples/grade-if-else" }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        title: "Day 7: Loops - For & While",
+                        tasks: [
+                            {
+                                text: "Learn for and while loops",
+                                time: "Morning (30min)",
+                                links: [
+                                    { name: "For Loops", url: "https://www.w3schools.com/python/python_for_loops.asp" },
+                                    { name: "While Loops", url: "https://www.w3schools.com/python/python_while_loops.asp" }
+                                ]
+                            },
+                            {
+                                text: "Practice: FizzBuzz challenge",
+                                time: "Evening (30min)",
+                                links: [
+                                    { name: "FizzBuzz Example", url: "https://www.geeksforgeeks.org/fizz-buzz-program-in-python/" }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        title: "Day 8: Functions",
+                        tasks: [
+                            {
+                                text: "Define and call functions",
+                                time: "Morning (30min)",
+                                links: [
+                                    { name: "Python Functions", url: "https://www.w3schools.com/python/python_functions.asp" }
+                                ]
+                            },
+                            {
+                                text: "Practice: Write a function to check for prime numbers",
+                                time: "Evening (30min)",
+                                links: [
+                                    { name: "Prime Checker Example", url: "https://www.programiz.com/python-programming/examples/prime-number" }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        title: "Day 9: Arguments & Return Values",
+                        tasks: [
+                            {
+                                text: "Learn about function arguments and return values",
+                                time: "Morning (30min)",
+                                links: [
+                                    { name: "Function Arguments", url: "https://www.w3schools.com/python/python_functions.asp" }
+                                ]
+                            },
+                            {
+                                text: "Practice: Write a function to reverse a string",
+                                time: "Evening (30min)",
+                                links: [
+                                    { name: "Reverse String Example", url: "https://www.geeksforgeeks.org/python-program-to-reverse-a-string/" }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        title: "Day 10: Error Handling",
+                        tasks: [
+                            {
+                                text: "Learn try, except, finally blocks",
+                                time: "Morning (30min)",
+                                links: [
+                                    { name: "Python Exceptions", url: "https://www.w3schools.com/python/python_try_except.asp" }
+                                ]
+                            },
+                            {
+                                text: "Practice: Handle division by zero in calculator",
+                                time: "Evening (30min)",
+                                links: [
+                                    { name: "Exception Example", url: "https://www.programiz.com/python-programming/exception-handling" }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        title: "Day 11: File I/O",
+                        tasks: [
+                            {
+                                text: "Read and write files in Python",
+                                time: "Morning (30min)",
+                                links: [
+                                    { name: "File Handling", url: "https://www.w3schools.com/python/python_file_handling.asp" }
+                                ]
+                            },
+                            {
+                                text: "Mini project: Save user input to a file",
+                                time: "Evening (30min)",
+                                links: [
+                                    { name: "Write to File Example", url: "https://www.programiz.com/python-programming/file-operation" }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        title: "Day 12: List Comprehensions",
+                        tasks: [
+                            {
+                                text: "Learn about list comprehensions",
+                                time: "Morning (30min)",
+                                links: [
+                                    { name: "List Comprehensions", url: "https://www.w3schools.com/python/python_lists_comprehension.asp" }
+                                ]
+                            },
+                            {
+                                text: "Practice: Generate squares of numbers 1-10",
+                                time: "Evening (30min)",
+                                links: [
+                                    { name: "List Comprehension Example", url: "https://www.programiz.com/python-programming/list-comprehension" }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        title: "Day 13: Slicing & String Methods",
+                        tasks: [
+                            {
+                                text: "Practice slicing lists and strings",
+                                time: "Morning (30min)",
+                                links: [
+                                    { name: "Slicing", url: "https://www.w3schools.com/python/python_lists_slicing.asp" }
+                                ]
+                            },
+                            {
+                                text: "Explore common string methods",
+                                time: "Evening (30min)",
+                                links: [
+                                    { name: "String Methods", url: "https://www.w3schools.com/python/python_strings_methods.asp" }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        title: "Day 14: Modules & Packages",
+                        tasks: [
+                            {
+                                text: "Import and use standard modules",
+                                time: "Morning (30min)",
+                                links: [
+                                    { name: "Python Modules", url: "https://www.w3schools.com/python/python_modules.asp" }
+                                ]
+                            },
+                            {
+                                text: "Install and use a third-party package (e.g., requests)",
+                                time: "Evening (30min)",
+                                links: [
+                                    { name: "Pip & Packages", url: "https://www.w3schools.com/python/python_pip.asp" }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        title: "Day 15: OOP - Classes & Objects",
+                        tasks: [
+                            {
+                                text: "Learn about classes and objects",
+                                time: "Morning (30min)",
+                                links: [
+                                    { name: "Python OOP", url: "https://www.w3schools.com/python/python_classes.asp" }
+                                ]
+                            },
+                            {
+                                text: "Practice: Create a simple class (e.g., Dog)",
+                                time: "Evening (30min)",
+                                links: [
+                                    { name: "Class Example", url: "https://www.programiz.com/python-programming/class" }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        title: "Day 16: OOP - Methods & Inheritance",
+                        tasks: [
+                            {
+                                text: "Add methods to your class",
+                                time: "Morning (30min)",
+                                links: [
+                                    { name: "Class Methods", url: "https://www.w3schools.com/python/python_classes.asp" }
+                                ]
+                            },
+                            {
+                                text: "Learn about inheritance",
+                                time: "Evening (30min)",
+                                links: [
+                                    { name: "Inheritance", url: "https://www.w3schools.com/python/python_inheritance.asp" }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        title: "Day 17: OOP - Special Methods",
+                        tasks: [
+                            {
+                                text: "Explore __init__ and __str__ methods",
+                                time: "Morning (30min)",
+                                links: [
+                                    { name: "Special Methods", url: "https://www.programiz.com/python-programming/methods" }
+                                ]
+                            },
+                            {
+                                text: "Practice: Add __str__ to your class",
+                                time: "Evening (30min)",
+                                links: [
+                                    { name: "Class __str__ Example", url: "https://www.geeksforgeeks.org/__str__-function-python/" }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        title: "Day 18: OOP - Encapsulation & Polymorphism",
+                        tasks: [
+                            {
+                                text: "Learn about encapsulation (private/protected members)",
+                                time: "Morning (30min)",
+                                links: [
+                                    { name: "Encapsulation", url: "https://www.geeksforgeeks.org/encapsulation-in-python/" }
+                                ]
+                            },
+                            {
+                                text: "Understand polymorphism in Python",
+                                time: "Evening (30min)",
+                                links: [
+                                    { name: "Polymorphism", url: "https://www.programiz.com/python-programming/polymorphism" }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        title: "Day 19: Lambda, Map, Filter, Reduce",
+                        tasks: [
+                            {
+                                text: "Learn about lambda functions",
+                                time: "Morning (30min)",
+                                links: [
+                                    { name: "Lambda Functions", url: "https://www.w3schools.com/python/python_lambda.asp" }
+                                ]
+                            },
+                            {
+                                text: "Practice map, filter, and reduce",
+                                time: "Evening (30min)",
+                                links: [
+                                    { name: "Map/Filter/Reduce", url: "https://realpython.com/python-map-function/" }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        title: "Day 20: Working with JSON",
+                        tasks: [
+                            {
+                                text: "Read and write JSON files",
+                                time: "Morning (30min)",
+                                links: [
+                                    { name: "JSON in Python", url: "https://www.w3schools.com/python/python_json.asp" }
+                                ]
+                            },
+                            {
+                                text: "Mini project: Save user data as JSON",
+                                time: "Evening (30min)",
+                                links: [
+                                    { name: "JSON Example", url: "https://www.programiz.com/python-programming/json" }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        title: "Day 21: Virtual Environments & pip",
+                        tasks: [
+                            {
+                                text: "Create and activate a virtual environment",
+                                time: "Morning (30min)",
+                                links: [
+                                    { name: "venv Tutorial", url: "https://docs.python.org/3/library/venv.html" }
+                                ]
+                            },
+                            {
+                                text: "Install packages with pip",
+                                time: "Evening (30min)",
+                                links: [
+                                    { name: "pip Guide", url: "https://packaging.python.org/tutorials/installing-packages/" }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        title: "Day 22: Web Scraping Basics",
+                        tasks: [
+                            {
+                                text: "Install and use requests & BeautifulSoup",
+                                time: "Morning (30min)",
+                                links: [
+                                    { name: "Requests", url: "https://requests.readthedocs.io/en/latest/" },
+                                    { name: "BeautifulSoup", url: "https://www.crummy.com/software/BeautifulSoup/bs4/doc/" }
+                                ]
+                            },
+                            {
+                                text: "Mini project: Scrape titles from a web page",
+                                time: "Evening (30min)",
+                                links: [
+                                    { name: "Web Scraping Example", url: "https://realpython.com/beautiful-soup-web-scraper-python/" }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        title: "Day 23: APIs & JSON",
+                        tasks: [
+                            {
+                                text: "Make API requests and parse JSON",
+                                time: "Morning (30min)",
+                                links: [
+                                    { name: "API Requests", url: "https://realpython.com/api-integration-in-python/" }
+                                ]
+                            },
+                            {
+                                text: "Practice: Get data from a public API",
+                                time: "Evening (30min)",
+                                links: [
+                                    { name: "JSONPlaceholder", url: "https://jsonplaceholder.typicode.com/" }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        title: "Day 24: Pandas & DataFrames",
+                        tasks: [
+                            {
+                                text: "Install pandas and load a CSV",
+                                time: "Morning (30min)",
+                                links: [
+                                    { name: "Pandas Tutorial", url: "https://pandas.pydata.org/docs/getting_started/intro_tutorials/" }
+                                ]
+                            },
+                            {
+                                text: "Practice: Analyze a dataset",
+                                time: "Evening (30min)",
+                                links: [
+                                    { name: "Kaggle Datasets", url: "https://www.kaggle.com/datasets" }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        title: "Day 25: NumPy & Arrays",
+                        tasks: [
+                            {
+                                text: "Learn NumPy basics and create arrays",
+                                time: "Morning (30min)",
+                                links: [
+                                    { name: "NumPy Quickstart", url: "https://numpy.org/doc/stable/user/quickstart.html" }
+                                ]
+                            },
+                            {
+                                text: "Practice: Array math and slicing",
+                                time: "Evening (30min)",
+                                links: [
+                                    { name: "NumPy Array Operations", url: "https://numpy.org/doc/stable/user/basics.indexing.html" }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        title: "Day 26: Matplotlib & Plotting",
+                        tasks: [
+                            {
+                                text: "Install matplotlib and plot a graph",
+                                time: "Morning (30min)",
+                                links: [
+                                    { name: "Matplotlib Tutorial", url: "https://matplotlib.org/stable/tutorials/introductory/pyplot.html" }
+                                ]
+                            },
+                            {
+                                text: "Practice: Visualize data from a CSV",
+                                time: "Evening (30min)",
+                                links: [
+                                    { name: "Plotting Example", url: "https://realpython.com/python-matplotlib-guide/" }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        title: "Day 27: Testing & Debugging",
+                        tasks: [
+                            {
+                                text: "Learn about unittest and debugging",
+                                time: "Morning (30min)",
+                                links: [
+                                    { name: "unittest", url: "https://docs.python.org/3/library/unittest.html" },
+                                    { name: "Debugger", url: "https://docs.python.org/3/library/pdb.html" }
+                                ]
+                            },
+                            {
+                                text: "Practice: Write and run a test case",
+                                time: "Evening (30min)",
+                                links: [
+                                    { name: "Testing Example", url: "https://realpython.com/python-testing/" }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        title: "Day 28: Flask Web App",
+                        tasks: [
+                            {
+                                text: "Install Flask and create a simple web app",
+                                time: "Morning (30min)",
+                                links: [
+                                    { name: "Flask Tutorial", url: "https://flask.palletsprojects.com/en/2.3.x/tutorial/" }
+                                ]
+                            },
+                            {
+                                text: "Practice: Add a route and display a message",
+                                time: "Evening (30min)",
+                                links: [
+                                    { name: "Flask Routes", url: "https://flask.palletsprojects.com/en/2.3.x/quickstart/#routing" }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        title: "Day 29: Deploying Python Apps",
+                        tasks: [
+                            {
+                                text: "Learn about deployment options (Heroku, Replit)",
+                                time: "Morning (30min)",
+                                links: [
+                                    { name: "Heroku Python", url: "https://devcenter.heroku.com/articles/getting-started-with-python" },
+                                    { name: "Replit", url: "https://replit.com/" }
+                                ]
+                            },
+                            {
+                                text: "Deploy your Flask app",
+                                time: "Evening (30min)",
+                                links: [
+                                    { name: "Deploy Flask", url: "https://devcenter.heroku.com/articles/getting-started-with-python" }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        title: "Day 30: Capstone Project & Review",
+                        tasks: [
+                            {
+                                text: "Choose a mini project (CLI tool, web app, data analysis, etc.)",
+                                time: "Morning (30min)",
+                                links: [
+                                    { name: "Project Ideas", url: "https://www.upgrad.com/blog/python-projects-ideas-topics-beginners/" }
+                                ]
+                            },
+                            {
+                                text: "Work on your project and review what you've learned",
+                                time: "Evening (30min)",
+                                links: [
+                                    { name: "Python Review", url: "https://www.hackerrank.com/domains/python" }
+                                ]
+                            }
+                        ]
+                    }
+                ];
+                
+                this.loadData();
+                this.init();
+                this.scheduleNotifications();
+            }
+
+            init() {
+                this.updateUI();
+                this.bindEvents();
+                this.checkForAchievements();
+            }
+
+            bindEvents() {
+                document.getElementById('enableNotifications').addEventListener('click', () => {
+                    this.enableNotifications();
+                });
+
+                document.getElementById('resetProgress').addEventListener('click', () => {
+                    if (confirm('Reset all progress? This cannot be undone.')) {
+                        this.resetProgress();
+                    }
+                });
+
+                document.getElementById('prevDay').addEventListener('click', () => {
+                    if (this.currentDay > 0) {
+                        this.currentDay--;
+                        this.updateUI();
+                        this.saveData();
+                    }
+                });
+
+                document.getElementById('nextDay').addEventListener('click', () => {
+                    if (this.currentDay < this.days.length - 1) {
+                        this.currentDay++;
+                        this.updateUI();
+                        this.saveData();
+                    }
+                });
+            }
+
+            updateUI() {
+                this.renderDay();
+                this.updateProgress();
+                this.updateStats();
+                this.updateNotificationStatus();
+                this.updateNavButtons();
+            }
+
+            updateNavButtons() {
+                const prevBtn = document.getElementById('prevDay');
+                const nextBtn = document.getElementById('nextDay');
+                
+                prevBtn.disabled = this.currentDay === 0;
+                nextBtn.disabled = this.currentDay === this.days.length - 1;
+            }
+
+            renderDay() {
+                const day = this.days[this.currentDay];
+                document.getElementById('dayTitle').textContent = day.title;
+                
+                const taskList = document.getElementById('taskList');
+                taskList.innerHTML = '';
+
+                day.tasks.forEach((task, index) => {
+                    const taskId = `d${this.currentDay}_t${index}`;
+                    const isCompleted = this.completedTasks[taskId] || false;
+
+                    const li = document.createElement('li');
+                    li.className = 'task-item';
+                    
+                    const linksHtml = task.links ? task.links.map(link => 
+                        `<a href="${link.url}" target="_blank" class="task-link">📚 ${link.name}</a>`
+                    ).join(' ') : '';
+                    
+                    li.innerHTML = `
+                        <div class="task-checkbox ${isCompleted ? 'completed' : ''}" data-task="${taskId}"></div>
+                        <div class="task-content">
+                            <div class="task-text ${isCompleted ? 'completed' : ''}">${task.text}</div>
+                            <div class="task-links">${linksHtml}</div>
+                            <div class="task-time">${task.time}</div>
+                        </div>
+                    `;
+
+                    li.querySelector('.task-checkbox').addEventListener('click', () => {
+                        this.toggleTask(taskId);
+                    });
+
+                    taskList.appendChild(li);
+                });
+            }
+
+            toggleTask(taskId) {
+                this.completedTasks[taskId] = !this.completedTasks[taskId];
+                this.saveData();
+                this.updateUI();
+                this.checkForAchievements();
+
+                if (this.completedTasks[taskId]) {
+                    this.showTaskComplete();
+                }
+            }
+
+            showTaskComplete() {
+                document.body.style.background = 'linear-gradient(135deg, #4ade80 0%, #667eea 100%)';
+                setTimeout(() => {
+                    document.body.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                }, 300);
+            }
+
+            updateProgress() {
+                const totalTasks = this.days.reduce((sum, day) => sum + day.tasks.length, 0);
+                const completedCount = Object.values(this.completedTasks).filter(Boolean).length;
+                const percentage = Math.round((completedCount / totalTasks) * 100);
+
+                const circle = document.getElementById('progressCircle');
+                const circumference = 2 * Math.PI * 52;
+                const offset = circumference - (percentage / 100) * circumference;
+                
+                circle.style.strokeDasharray = `${circumference} ${circumference}`;
+                circle.style.strokeDashoffset = offset;
+
+                document.getElementById('progressText').textContent = `${percentage}%`;
+            }
+
+            updateStats() {
+                const streak = this.calculateStreak();
+                const totalDays = this.calculateTotalDays();
+
+                document.getElementById('currentStreak').textContent = streak;
+                document.getElementById('totalDays').textContent = totalDays;
+
+                const streakFire = document.getElementById('streakFire');
+                streakFire.style.display = streak >= 3 ? 'inline-block' : 'none';
+            }
+
+            calculateStreak() {
+                let streak = 0;
+                for (let i = this.currentDay; i >= 0; i--) {
+                    const day = this.days[i];
+                    const allDone = day.tasks.every((_, idx) => this.completedTasks[`d${i}_t${idx}`]);
+                    if (allDone) streak++;
+                    else break;
+                }
+                return streak;
+            }
+
+            calculateTotalDays() {
+                let days = 0;
+                for (let i = 0; i < this.days.length; i++) {
+                    const day = this.days[i];
+                    const allDone = day.tasks.every((_, idx) => this.completedTasks[`d${i}_t${idx}`]);
+                    if (allDone) days++;
+                }
+                return days;
+            }
+
+            async enableNotifications() {
+                if ('Notification' in window) {
+                    const permission = await Notification.requestPermission();
+                    if (permission === 'granted') {
+                        this.notificationsEnabled = true;
+                        this.saveData();
+                        this.updateNotificationStatus();
+                        this.scheduleNotifications();
+                        this.showNotification('🎉 Notifications enabled! You\'ll get daily Python learning reminders.');
+                    }
+                } else {
+                    alert('Notifications are not supported in this browser.');
+                }
+            }
+
+            updateNotificationStatus() {
+                const status = document.getElementById('notificationStatus');
+                if (this.notificationsEnabled) {
+                    status.textContent = '✅ Daily notifications enabled';
+                    status.className = 'notification-status notification-enabled';
+                } else {
+                    status.textContent = '📱 Enable notifications for daily reminders';
+                    status.className = 'notification-status notification-disabled';
+                }
+            }
+
+            scheduleNotifications() {
+                if (!this.notificationsEnabled) return;
+
+                this.scheduleNotificationAt(9, 0, "🌅 Good morning! Time for your Python study (20-30min)");
+                this.scheduleNotificationAt(19, 0, "🌆 Evening Python session! Finish your daily tasks.");
+            }
+
+            scheduleNotificationAt(hour, minute, message) {
+                const now = new Date();
+                const scheduledTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hour, minute, 0);
+                
+                if (scheduledTime <= now) {
+                    scheduledTime.setDate(scheduledTime.getDate() + 1);
+                }
+
+                const timeUntilNotification = scheduledTime.getTime() - now.getTime();
+                
+                setTimeout(() => {
+                    this.showNotification(message);
+                    setInterval(() => {
+                        this.showNotification(message);
+                    }, 24 * 60 * 60 * 1000);
+                }, timeUntilNotification);
+            }
+
+            showNotification(message) {
+                if (this.notificationsEnabled && 'Notification' in window && Notification.permission === 'granted') {
+                    new Notification('Python Mastery Tracker', {
+                        body: message,
+                        icon: '🐍',
+                        badge: '🐍'
+                    });
+                }
+            }
+
+            checkForAchievements() {
+                const completedCount = Object.values(this.completedTasks).filter(Boolean).length;
+                const streak = this.calculateStreak();
+
+                const newAchievements = [];
+
+                if (completedCount >= 1 && !this.achievements.includes('first_task')) {
+                    newAchievements.push({ id: 'first_task', text: '🎯 First Task Complete!' });
+                }
+                
+                if (completedCount >= 7 && !this.achievements.includes('week_warrior')) {
+                    newAchievements.push({ id: 'week_warrior', text: '📚 Week Warrior - 7 tasks completed!' });
+                }
+                
+                if (streak >= 7 && !this.achievements.includes('streak_master')) {
+                    newAchievements.push({ id: 'streak_master', text: '🔥 Streak Master - 7 days in a row!' });
+                }
+                
+                if (completedCount >= 30 && !this.achievements.includes('python_hero')) {
+                    newAchievements.push({ id: 'python_hero', text: '🐍 Python Hero - Halfway there!' });
+                }
+
+                if (completedCount >= 60 && !this.achievements.includes('python_master')) {
+                    newAchievements.push({ id: 'python_master', text: '🏆 Python Master - 30 Days Complete!' });
+                }
+
+                newAchievements.forEach(achievement => {
+                    this.achievements.push(achievement.id);
+                    this.showAchievement(achievement.text);
+                });
+
+                if (newAchievements.length > 0) {
+                    this.saveData();
+                }
+            }
+
+            showAchievement(text) {
+                const container = document.getElementById('achievementContainer');
+                const achievement = document.createElement('div');
+                achievement.className = 'achievement';
+                achievement.textContent = text;
+                container.appendChild(achievement);
+
+                setTimeout(() => {
+                    achievement.remove();
+                }, 3000);
+            }
+
+            resetProgress() {
+                this.completedTasks = {};
+                this.startDate = null;
+                this.achievements = [];
+                this.currentDay = 0;
+                this.saveData();
+                this.updateUI();
+            }
+
+            saveData() {
+                const data = {
+                    completedTasks: this.completedTasks,
+                    currentDay: this.currentDay,
+                    startDate: this.startDate,
+                    notificationsEnabled: this.notificationsEnabled,
+                    achievements: this.achievements
+                };
+                
+                localStorage.setItem('pythonTrackerData', JSON.stringify(data));
+            }
+
+            loadData() {
+                const data = JSON.parse(localStorage.getItem('pythonTrackerData') || '{}');
+                this.completedTasks = data.completedTasks || {};
+                this.currentDay = data.currentDay || 0;
+                this.startDate = data.startDate || new Date().toISOString();
+                this.notificationsEnabled = data.notificationsEnabled || false;
+                this.achievements = data.achievements || [];
+            }
+        }
+
+        // Initialize the tracker when the page loads
+        window.addEventListener('load', () => {
+            new PythonDailyTracker();
+        });
+
+        // Register service worker if available
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js').catch(() => {
+                // Service worker registration failed, but app still works
+            });
+        }
+    </script>
+</body>
+</html>
