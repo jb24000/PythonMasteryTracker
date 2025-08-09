@@ -1,6 +1,6 @@
 # 🐍 Python 30-Day Mastery Tracker
 
-**Live Demo:** [jb24000.github.io/python-tracker](https://jb24000.github.io/python-tracker/)
+**Live Demo:** [jb24000.github.io/python-tracker](https://jb24000.github.io/PythonMasteryTracker/)
 
 ---
 
@@ -25,7 +25,7 @@ The **Python 30-Day Mastery Tracker** is an interactive, web-based tool designed
 ### 🌐 View Online
 
 Visit the live site:  
-[https://jb24000.github.io/python-tracker/](https://jb24000.github.io/python-tracker/)
+[https://jb24000.github.io/python-tracker/](https://jb24000.github.io/PythonMasteryTracker/)
 
 ### 💻 Use Locally
 
