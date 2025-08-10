@@ -1240,48 +1240,136 @@
             }
 
             setupPWA() {
+                console.log('Setting up PWA...');
+                
+                // Store references globally for debugging
+                window.pythonTrackerInstance = this;
+                
                 // Listen for PWA install prompt
                 window.addEventListener('beforeinstallprompt', (e) => {
+                    console.log('beforeinstallprompt event captured!');
                     e.preventDefault();
+                    
+                    // Store in multiple places for reliability
                     this.deferredPrompt = e;
-                    window.deferredPrompt = e; // FIXED: Also store on window for easier access
+                    window.deferredPrompt = e;
+                    window.installEvent = e;
+                    
                     this.showInstallPrompt();
+                    console.log('Install prompt should now be visible');
                 });
 
-                // Handle install prompt click
-                document.getElementById('installPrompt').addEventListener('click', () => {
-                    this.installPWA();
-                });
+                // Handle install prompt click with better error handling
+                const installBtn = document.getElementById('installPrompt');
+                if (installBtn) {
+                    installBtn.addEventListener('click', (e) => {
+                        console.log('Install button clicked!');
+                        e.preventDefault();
+                        this.installPWA();
+                    });
+                    console.log('Install button event listener added');
+                } else {
+                    console.error('Install button not found!');
+                }
 
                 // Hide install prompt if already installed
                 window.addEventListener('appinstalled', () => {
+                    console.log('App installed successfully!');
                     this.hideInstallPrompt();
+                    this.deferredPrompt = null;
+                    window.deferredPrompt = null;
+                    window.installEvent = null;
                 });
+
+                // Check if already installed
+                if (window.matchMedia('(display-mode: standalone)').matches) {
+                    console.log('App already installed');
+                    this.hideInstallPrompt();
+                }
             }
 
             showInstallPrompt() {
                 const installPrompt = document.getElementById('installPrompt');
-                installPrompt.classList.add('show');
+                if (installPrompt) {
+                    installPrompt.classList.add('show');
+                    installPrompt.style.display = 'block';
+                    console.log('Install prompt button shown');
+                } else {
+                    console.error('Install prompt element not found');
+                }
             }
 
             hideInstallPrompt() {
                 const installPrompt = document.getElementById('installPrompt');
-                installPrompt.classList.remove('show');
+                if (installPrompt) {
+                    installPrompt.classList.remove('show');
+                    installPrompt.style.display = 'none';
+                    console.log('Install prompt button hidden');
+                }
             }
 
             async installPWA() {
-                if (this.deferredPrompt) {
-                    this.deferredPrompt.prompt();
-                    const { outcome } = await this.deferredPrompt.userChoice;
-                    
-                    if (outcome === 'accepted') {
-                        this.hideInstallPrompt();
-                        this.showNotification('🎉 App installed! You can now use it offline.');
+                console.log('installPWA() called');
+                
+                // Try multiple sources for the deferred prompt
+                let prompt = this.deferredPrompt || window.deferredPrompt || window.installEvent;
+                
+                if (prompt) {
+                    try {
+                        console.log('Found install prompt, triggering...');
+                        await prompt.prompt();
+                        
+                        const { outcome } = await prompt.userChoice;
+                        console.log('User choice:', outcome);
+                        
+                        if (outcome === 'accepted') {
+                            this.hideInstallPrompt();
+                            this.showNotification('🎉 App installed! You can now use it offline.');
+                            console.log('Install accepted');
+                        } else {
+                            console.log('Install dismissed by user');
+                        }
+                        
+                        // Clear all references
+                        this.deferredPrompt = null;
+                        window.deferredPrompt = null;
+                        window.installEvent = null;
+                        
+                    } catch (error) {
+                        console.error('Install prompt error:', error);
+                        this.showManualInstallInstructions();
                     }
-                    
-                    this.deferredPrompt = null;
-                    window.deferredPrompt = null; // FIXED: Clear both references
+                } else {
+                    console.log('No install prompt available, showing manual instructions');
+                    this.showManualInstallInstructions();
                 }
+            }
+
+            showManualInstallInstructions() {
+                const isChrome = navigator.userAgent.includes('Chrome');
+                const isEdge = navigator.userAgent.includes('Edg');
+                const isSafari = navigator.userAgent.includes('Safari') && !isChrome;
+                
+                let instructions = 'Install this app:\n\n';
+                
+                if (isChrome) {
+                    instructions += '1. Look for ⊕ or 📱 icon in address bar\n' +
+                                  '2. Chrome Menu → More Tools → Create Shortcut → ✓ Open as window\n' +
+                                  '3. Chrome Menu → Cast, save and share → Install app';
+                } else if (isEdge) {
+                    instructions += '1. Look for ⊕ icon in address bar\n' +
+                                  '2. Edge Menu → Apps → Install this site as an app';
+                } else if (isSafari) {
+                    instructions += '1. Safari → Share button → Add to Home Screen\n' +
+                                  '2. On iOS: Share → Add to Home Screen';
+                } else {
+                    instructions += '1. Look for install option in browser menu\n' +
+                                  '2. Check address bar for install icon\n' +
+                                  '3. Try browser settings → Install app';
+                }
+                
+                alert(instructions);
+                console.log('Manual install instructions shown');
             }
 
             bindEvents() {
