@@ -7,9 +7,9 @@
     
     <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#667eea">
-    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Python Mastery">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="description" content="Master Python in 30 days with daily challenges and progress tracking">
     
     <!-- PWA Icons -->
